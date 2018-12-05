@@ -4,6 +4,10 @@
 use Adobe\IMS\AdobeIO;
 use Adobe\Launch\ReactorAPI;
 use Slack\SlackAPI;
+use Ahc\Jwt\JWT;
+
+
+require_once __DIR__ . '/../autoload.php';
 
 
 /***************************************
@@ -52,7 +56,7 @@ else {
 /***************************************/
 
 try {
-    if (!(@include  sprintf("../config/%s.php", $state) )) {
+    if (!(@include  sprintf(__DIR__ . "/../config/%s.php", $state) )) {
         throw new Exception ('Specific config file does not exist');
     }
 }
@@ -60,11 +64,17 @@ catch (Exception $e) {
     echo "\nThe config file you specified '" . $state . ".php' was not found.\nPlease make sure you have a file in the config direct matching your input.\n\n";
     exit;
 }
-require "../library/Slack/SlackAPI.php";
-require "../library/Adobe/IMS/AdobeIO.php";
-require "../library/Adobe/Launch/ReactorAPI.php";
+
 
 $verbose = $config['environment']['verbose'];
+$jwt = new JWT($config['adobe']['io']['private_key_path'], 'RS256');
+$token = $jwt->encode([
+        'iss'    => $config['adobe']['io']['ims_org'],
+        'sub'    => $config['adobe']['io']['tech_acct_id'],
+        'https://ims-na1.adobelogin.com/s/ent_reactor_admin_sdk' => true,
+        'aud'    => "https://ims-na1.adobelogin.com/c/645cbd8f5b874db39cb1e0b6291a7f31",
+]);
+
 
 
 /***************************************
@@ -82,8 +92,8 @@ if (!isset($config['adobe']['io']['client_secret']) || $config['adobe']['io']['c
     echo "\nYou have not yet specified your AdobeIO client secret obtained from https://console.adobe.io/.\n";
     exit;
 }
-if (!isset($config['adobe']['io']['jwt_token']) || $config['adobe']['io']['jwt_token'] == ''){
-    echo "\nYou have not yet specified your AdobeIO client secret obtained from https://console.adobe.io/.\n";
+if (!isset($config['adobe']['io']['tech_acct_id']) || $config['adobe']['io']['tech_acct_id'] == ''){
+    echo "\nYou have not yet specified your AdobeIO technical account ID obtained from https://console.adobe.io/.\n";
     exit;
 }
 if (!isset($config['adobe']['launch']['launch_api']) || $config['adobe']['launch']['launch_api'] == ''){
@@ -112,7 +122,7 @@ $slack = new SlackAPI();
 $slack->setWebhooksList($config['slack']['webhooks']);
 
 // Local Database
-$strCacheFile = "cache/Extensions.txt";
+$strCacheFile = __DIR__ ."/cache/Extensions.txt";
 
 // Hydrate Local Cache
 if (is_readable($strCacheFile)) {
@@ -143,7 +153,7 @@ else {
 
 // Adobe IMS and AdobeIO Authentication
 $adobeIO = new AdobeIO($config['adobe']['io']['ims_end_point']);
-$access_token = $adobeIO->getAccessToken($config['adobe']['io']['client_id'], $config['adobe']['io']['client_secret'], $config['adobe']['io']['jwt_token']);
+$access_token = $adobeIO->getAccessToken($config['adobe']['io']['client_id'], $config['adobe']['io']['client_secret'], $token);
 
 
 // Adobe Launch API
@@ -186,7 +196,7 @@ if ($arrExtensions && sizeof($arrExtensions > 0)) {
                 if ($strCurrentVersion != $previousVersion) {
                     
                     // Send notification of Version Update
-                    $slack->sendUpgradeMessage($config['launch']['launch_env'], $arrFoundExtension['display_name'], $strCurrentVersion, $arrFoundExtension['created']);
+                    $slack->sendUpgradeMessage($config['adobe']['launch']['launch_env'], $arrFoundExtension['display_name'], $strCurrentVersion, $arrFoundExtension['created']);
                     if ($verbose) {
                         echo "Sent notification of new version of '" . $arrFoundExtension['display_name'] . "' extension.\n";
                     }
@@ -213,7 +223,7 @@ if (is_array($arrFoundExtesnions) && sizeof($arrFoundExtesnions) > 0) {
         if (isset($recLocalExtensions) && is_resource($recLocalExtensions)) {
             rewind($recLocalExtensions);
         }
-        $recLocalExtensions = fopen("cache/Extensions.txt", "w+");
+        $recLocalExtensions = fopen(__DIR__ . "/cache/Extensions.txt", "w+");
         $serializedExtensions = serialize($arrFoundExtesnions);
         fwrite($recLocalExtensions, $serializedExtensions);
         fclose($recLocalExtensions);
@@ -225,14 +235,9 @@ if (is_array($arrFoundExtesnions) && sizeof($arrFoundExtesnions) > 0) {
 }
 
 // Show Stats
-if ($verbose) {
-    echo "\n================================\n";
-    echo "Completed successfully at " . date("Y-m-d H:i:s") . "\n";
-    echo "There are currently " . $intExtensionsInCatalog . " extensions in the catalog.  There were " . $intLocalCachedExtensions . " in the local cache.\n";
-    echo "There were " . $intUpgradedExtensions . " extensions upgraded, and " . $intNewExtensions . " new extensions released.";
-    echo "\n================================\n\n";
-}
-else {
-    echo "\nSent a total of " . $intNewExtensions + $intUpgradedExtensions . " notifications at " . date("Y-m-d H:i:s") . ".\n";
-}
+echo "\n===============================================\n";
+echo "Completed successfully at " . date("Y-m-d H:i:s") . "\n";
+echo "There are currently " . $intExtensionsInCatalog . " extensions in the catalog.  There were " . $intLocalCachedExtensions . " in the local cache.\n";
+echo "There were " . $intUpgradedExtensions . " extensions upgraded, and " . $intNewExtensions . " new extensions released.";
+echo "\n===============================================\n\n";
 exit;

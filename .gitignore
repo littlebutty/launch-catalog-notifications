@@ -1,3 +1,5 @@
-.settings
+.settings/
 .buildpath
 .project
+vendor/
+src/bin/cache/Extensions.txt
