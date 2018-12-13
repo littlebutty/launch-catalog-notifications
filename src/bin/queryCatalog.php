@@ -1,4 +1,3 @@
-#!/usr/local/opt/php@7.1/bin/php
 <?php
 
 use Adobe\IMS\AdobeIO;
@@ -45,7 +44,7 @@ if (isset($config) && strlen($config) > 2) {
     }
 }
 else {
-    $state = 'development';
+    $state = 'default';
 }
 
 
@@ -229,15 +228,21 @@ if (is_array($arrFoundExtesnions) && sizeof($arrFoundExtesnions) > 0) {
         fclose($recLocalExtensions);
     }
     catch (Exception $e) {
-        echo "\nFailed to read or write the local stoage file to cache directory.\nPlease make sure this sript can write to this directory.\n";
+        echo "\nFailed to read or write the local storage file to cache directory.\nPlease make sure this sript can write to this directory.\n";
         exit;
     }
 }
 
 // Show Stats
-echo "\n===============================================\n";
-echo "Completed successfully at " . date("Y-m-d H:i:s") . "\n";
-echo "There are currently " . $intExtensionsInCatalog . " extensions in the catalog.  There were " . $intLocalCachedExtensions . " in the local cache.\n";
-echo "There were " . $intUpgradedExtensions . " extensions upgraded, and " . $intNewExtensions . " new extensions released.";
-echo "\n===============================================\n\n";
+if ($verbose) {
+    echo "\n===============================================\n";
+    echo "Completed successfully at " . date("Y-m-d H:i:s T") . "\n";
+    echo "There are currently " . $intExtensionsInCatalog . " extensions in the catalog.  There were " . $intLocalCachedExtensions . " in the local cache.\n";
+    echo "There were " . $intUpgradedExtensions . " extensions upgraded, and " . $intNewExtensions . " new extensions released.";
+    echo "\n===============================================\n\n";
+}
+else {
+    echo "\nCompleted successfully at " . date("Y-m-d H:i:s T") . "\n";
+    echo "Sent " . ($intUpgradedExtensions + $intNewExtensions) . " notifications.\n";
+}
 exit;
