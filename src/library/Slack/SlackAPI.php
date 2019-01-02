@@ -114,7 +114,7 @@ class SlackAPI
     {
         $time = strtotime($date);
         $friendlyDate = date('l jS \of F Y h:i:s A', $time);
-        $strUpgradeMessage = sprintf("FYI: A new version of the '%s' extension was upgraded to version '%s' in the Launch %s Catalog on %s.", $name, $version, $environment, $friendlyDate);
+        $strUpgradeMessage = sprintf("FYI: A new version of the '%s' extension was upgraded to v'%s' in the Launch %s Catalog.", $name, $version, $environment);
         
         return $this->postMessage($strUpgradeMessage);
     }
@@ -132,7 +132,7 @@ class SlackAPI
     {
         $time = strtotime($date);
         $friendlyDate = date('l jS \of F Y h:i:s A', $time);
-        $strNewMessage = sprintf("WooHoo! A new extension called '%s' was released to the %s Launch Catalog by '%s' on %s.", $name, $environment, $author, $friendlyDate);
+        $strNewMessage = sprintf("WooHoo! A new extension called '%s' was released to the %s Launch Catalog by '%s'.", $name, $environment, $author);
         
         return $this->postMessage($strNewMessage);
     }
