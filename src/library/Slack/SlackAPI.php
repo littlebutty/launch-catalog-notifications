@@ -126,13 +126,19 @@ class SlackAPI
      * @param String $name
      * @param String $author
      * @param String $date
+     * @param String $url (URL to Extension Info.  Usuall Exchange Listing)
      * @return int
      */
-    public function sendNewExtensionMessage ($environment, $name, $author, $date)
+    public function sendNewExtensionMessage ($environment, $name, $author, $date, $url = '')
     {
         $time = strtotime($date);
         $friendlyDate = date('l jS \of F Y h:i:s A', $time);
         $strNewMessage = sprintf("WooHoo! A new extension called '%s' was released to the %s Launch Catalog by '%s'.", $name, $environment, $author);
+        
+        if (strlen($url) > 0) {
+            $linkMessage = sprintf("Check out the details here: %s.", $url);
+            $strNewMessage = $strNewMessage . " " . $linkMessage;
+        }
         
         return $this->postMessage($strNewMessage);
     }

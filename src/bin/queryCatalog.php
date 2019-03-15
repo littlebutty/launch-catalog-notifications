@@ -175,7 +175,7 @@ if ($arrExtensions && sizeof($arrExtensions > 0)) {
         $arrFoundExtension['created'] = $extension['attributes']['created_at'];
         $arrFoundExtension['platform'] = $extension['attributes']['platform'];
         $arrFoundExtension['version'] = $strCurrentVersion;
-        $arrFoundExtension['exchange'] = $extension['attributes']['exchange_url'];
+        $arrFoundExtension['exchange'] = $extension['attributes']['exchange_url'];        
         
         $arrFoundExtesnions[$strExtensionIdentifer] = $arrFoundExtension;
         
@@ -204,7 +204,7 @@ if ($arrExtensions && sizeof($arrExtensions > 0)) {
             }
             else {
                 // New Extension!!
-                $slack->sendNewExtensionMessage($config['adobe']['launch']['launch_env'], $arrFoundExtension['display_name'], $arrFoundExtension['author'], $arrFoundExtension['created']);
+                $slack->sendNewExtensionMessage($config['adobe']['launch']['launch_env'], $arrFoundExtension['display_name'], $arrFoundExtension['author'], $arrFoundExtension['created'], $arrFoundExtension['exchange']);
                 if ($verbose) {
                     echo "FYI:  sent notification of new extension named '" . $arrFoundExtension['display_name'] . "'.\n";
                 }
