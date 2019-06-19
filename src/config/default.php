@@ -27,6 +27,7 @@ $config = array(
                 'launch'                => array(
                         'launch_env'            => 'Production',
                         'launch_api'            => 'https://reactor.adobe.io/extension_packages',
+                        'launch_catalog'        => 'web',
                 ),
                 'io'                    => array(
                         'private_key_path'      => '/Users/bpack/JWT/private.key',

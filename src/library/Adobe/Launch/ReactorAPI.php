@@ -26,31 +26,17 @@ class ReactorAPI
     private $_api_endpoint;
     
     
-    
-    
     /**
-     * Default Constructor
-     * Takes in a valid IMS Autheticated Token
+     * Privat function for making the underlining API call.
      * 
-     * @param String $access_token
-     */
-    public function __construct ($end_point, $access_token)
-    {
-        $this->_api_endpoint = $end_point;
-        $this->_access_token = $access_token;
-    }
-    
-    
-    /**
-     * Call to get a list of the Extensions currently in the 
-     * Launch Catalog.
+     * TODO:  make the payload dynamic as well
      * 
-     * @see https://developer.adobelaunch.com/api/extension_packages/list/
-     * @return Array
+     * @param  String $url
+     * @return JSON
      */
-    public function getExtensions ()
+    private function sendApiCall($url)
     {
-        $url = $this->_api_endpoint . "?page[size]=999&sort=display_name&filter[platform]=EQ%20web,EQ%20null&max_availability=private";
+        //$url = $this->_api_endpoint . "?page[size]=999&sort=display_name&filter[platform]=EQ%20web,EQ%20null&max_availability=private";
         $authorization = sprintf("Bearer %s", $this->_access_token);
         
         $curl = curl_init();
@@ -79,7 +65,7 @@ class ReactorAPI
         if ($err) {
             echo "cURL Error #:" . $err;
             exit;
-        } 
+        }
         
         $arrExtensions = json_decode($response, true);
         if (!is_array($arrExtensions) || !isset($arrExtensions['data'])) {
@@ -89,5 +75,52 @@ class ReactorAPI
         return $arrExtensions['data'];
     }
     
+    
+    
+    /**
+     * Default Constructor
+     * Takes in a valid IMS Autheticated Token
+     * 
+     * @param String $access_token
+     */
+    public function __construct ($end_point, $access_token)
+    {
+        $this->_api_endpoint = $end_point;
+        $this->_access_token = $access_token;
+    }
+    
+    
+    /**
+     * Call to get a list of the Extensions currently in the
+     * Launch Catalog.
+     *
+     * @see https://developer.adobelaunch.com/api/extension_packages/list/
+     * @return Array
+     */
+    public function getWebExtensions()
+    {
+        $url = $this->_api_endpoint . "?page[size]=999&sort=display_name&filter[platform]=EQ%20web,EQ%20null&max_availability=private";
+        return $this->sendApiCall($url);
+    }
+    
+    
+    /**
+     * Call to get a list of the Extensions currently in the
+     * Launch Catalog.
+     *
+     * @see https://developer.adobelaunch.com/api/extension_packages/list/
+     * @return Array
+     */
+    public function getMobileExtensions()
+    {
+        $url = $this->_api_endpoint . "?page[size]=999&sort=display_name&filter[platform]=EQ%20mobile,EQ%20null&max_availability=private";
+        return $this->sendApiCall($url);
+    }
+    
+    
+    public function createProperty ()
+    {
+        
+    } 
+    
 }
-

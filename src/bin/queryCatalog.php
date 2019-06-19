@@ -120,8 +120,9 @@ $intUpgradedExtensions      = 0;
 $slack = new SlackAPI();
 $slack->setWebhooksList($config['slack']['webhooks']);
 
+
 // Local Database
-$strCacheFile = __DIR__ ."/cache/Extensions.txt";
+$strCacheFile = __DIR__ ."/cache/Extensions_" . $config['adobe']['launch']['launch_catalog'] . ".txt";
 
 // Hydrate Local Cache
 if (is_readable($strCacheFile)) {
@@ -157,7 +158,16 @@ $access_token = $adobeIO->getAccessToken($config['adobe']['io']['client_id'], $c
 
 // Adobe Launch API
 $reactor = new ReactorAPI($config['adobe']['launch']['launch_api'], $access_token);
-$arrExtensions = $reactor->getExtensions();
+
+if (isset($config['adobe']['launch']['launch_catalog']) && strtolower(trim($config['adobe']['launch']['launch_catalog']) == 'mobile')) {
+    $arrExtensions = $reactor->getMobileExtensions();
+}
+else {
+    // Assume Web
+    $arrExtensions = $reactor->getWebExtensions();
+}
+    
+
 
 $arrFoundExtesnions = array();
 
@@ -222,7 +232,7 @@ if (is_array($arrFoundExtesnions) && sizeof($arrFoundExtesnions) > 0) {
         if (isset($recLocalExtensions) && is_resource($recLocalExtensions)) {
             rewind($recLocalExtensions);
         }
-        $recLocalExtensions = fopen(__DIR__ . "/cache/Extensions.txt", "w+");
+        $recLocalExtensions = fopen(__DIR__ . "/cache/Extensions_" . $config['adobe']['launch']['launch_catalog'] . ".txt", "w+");
         $serializedExtensions = serialize($arrFoundExtesnions);
         fwrite($recLocalExtensions, $serializedExtensions);
         fclose($recLocalExtensions);
