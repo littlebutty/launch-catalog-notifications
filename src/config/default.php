@@ -30,7 +30,7 @@ $config = array(
                         'launch_catalog'        => 'web',
                 ),
                 'io'                    => array(
-                        'private_key_path'      => '/Users/bpack/JWT/private.key',
+                        'private_key_path'      => 'PATH_TO_YOUR_PRIVATE_KEY',
                         'ims_end_point'         => 'https://ims-na1.adobelogin.com/ims/exchange/jwt/',
                         'ims_org'               => 'YOUR_IMS_ORG_GOES_HERE',
                         'tech_acct_id'          => 'YOUR_ADOBEIO_TECHNICAL_ACCT_ID_GOES_HERE',

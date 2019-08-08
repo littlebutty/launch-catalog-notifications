@@ -117,10 +117,4 @@ class ReactorAPI
         return $this->sendApiCall($url);
     }
     
-    
-    public function createProperty ()
-    {
-        
-    } 
-    
 }
