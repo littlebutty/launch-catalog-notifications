@@ -71,7 +71,7 @@ $token = $jwt->encode([
         'iss'    => $config['adobe']['io']['ims_org'],
         'sub'    => $config['adobe']['io']['tech_acct_id'],
         'https://ims-na1.adobelogin.com/s/ent_reactor_admin_sdk' => true,
-        'aud'    => "https://ims-na1.adobelogin.com/c/645cbd8f5b874db39cb1e0b6291a7f31",
+        'aud'    => "https://ims-na1.adobelogin.com/c/" . $config['adobe']['io']['client_id'],
 ]);
 
 
