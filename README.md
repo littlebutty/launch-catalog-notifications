@@ -12,9 +12,13 @@ This is a simple PHP script that periodically checked the Adobe Launch APIs to p
 
 ## Getting Started
 
-1. You will need to obtain Launch Access Tokens.  Follow these instructions found here: <https://developer.adobelaunch.com/api/guides/access_tokens/>
-2. You will need to create a Slack incoming webhook integration.  <https://api.slack.com/incoming-webhooks>
-3. Either edit the default config or add an additional one to the `/src/config` directory.  Additional ones can be referenced in the command line
-4. Run `composer install` inside the repo root directory
-5. Run the php script in the `/src/bin/queryCatalog.php` script  (it will need write permission to the `/src/bin/cache` directory
-6. Create a cron or some sort of timed execution of the script
+1. Clone the repo locally:  `git clone https://github.com/littlebutty/launch-catalog-notifications.git`
+2. Run composer installation:  `composer install`
+3. Verify the install wored and your php version is compatible:  `php src/bin/queryCatalog.php -h`  You should see the help notice.  The script will need write permission to the `/src/bin/cache` directory
+4. Obtain Launch Access Tokens and settings.  Follow these instructions found here: <https://developer.adobelaunch.com/api/guides/access_tokens/>
+5. Add the settings from the previous step by either editing the *default* config or add an additional one to the `/src/config` directory. Additional ones can be specified as a commandline argument.   
+6. Run the php script in the `/src/bin/queryCatalog.php` script.  It will use the default config if you do not specify one int as an argument.  Ex: `php src/bin/queryCatalog.php config=development`
+7. Create a cron or some sort of timed execution of the script
+
+## Support
+This repo is provided as is with now warranty or support and is ubject to the license terms.
