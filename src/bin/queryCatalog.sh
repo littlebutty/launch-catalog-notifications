@@ -1,4 +1,9 @@
 #!/bin/bash
 
-phpPath = which php
+SCRIPT=`realpath $0`;
+SCRIPTPATH=`dirname $SCRIPT`;
 
+EXEC="php $PHPPATH $SCRIPTPATH/queryCatalog.php";
+$EXEC;
+
+exit;
