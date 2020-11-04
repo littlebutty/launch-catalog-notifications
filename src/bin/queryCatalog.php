@@ -64,9 +64,9 @@ catch (Exception $e) {
     exit;
 }
 
-
 $verbose = $config['environment']['verbose'];
 $jwt = new JWT($config['adobe']['io']['private_key_path'], 'RS256');
+
 $token = $jwt->encode([
         'iss'    => $config['adobe']['io']['ims_org'],
         'sub'    => $config['adobe']['io']['tech_acct_id'],
@@ -166,12 +166,13 @@ else {
     // Assume Web
     $arrExtensions = $reactor->getWebExtensions();
 }
-    
-
 
 $arrFoundExtesnions = array();
 
-if ($arrExtensions && sizeof($arrExtensions > 0)) {
+//var_dump(sizeof($arrExtensions));
+//exit;
+
+if ($arrExtensions && sizeof($arrExtensions) > 0) {
     foreach ($arrExtensions as $extension) {
         $arrFoundExtension = array();
         

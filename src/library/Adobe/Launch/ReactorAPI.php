@@ -25,6 +25,7 @@ class ReactorAPI
      */
     private $_api_endpoint;
     
+   
     
     /**
      * Privat function for making the underlining API call.
@@ -72,7 +73,52 @@ class ReactorAPI
             echo "cURL Error when calling Launch APIs.  Reponse: " . var_dump($response);
             exit;
         }
-        return $arrExtensions['data'];
+        $intTotalPages = $arrExtensions['meta']['pagination']['total_pages'];
+        
+        // Check and see if we have multiple pages to retrieve
+        if ($intTotalPages > 1) {
+            $arrAllExtensions = $arrExtensions['data'];
+            for($i = $intTotalPages; $i > 1; $i--) {
+                $nextURL = $url . '&page[number]=' . $i;
+                
+                $curl = curl_init();
+                curl_setopt_array($curl, array(
+                        CURLOPT_URL => $nextURL,
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => "",
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 30,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => "GET",
+                        CURLOPT_POSTFIELDS => "",
+                        CURLOPT_HTTPHEADER => array(
+                                "Accept: application/vnd.api+json;revision=1",
+                                "Authorization: Bearer " . $authorization . "",
+                                "cache-control: no-cache",
+                                "x-api-key: Activation-DTM"
+                        ),
+                ));
+                
+                $response = curl_exec($curl);
+                $err = curl_error($curl);
+                
+                curl_close($curl);
+                
+                $arrNextSetOfExtensions = json_decode($response, true);
+                if (!is_array($arrNextSetOfExtensions) || !isset($arrNextSetOfExtensions['data'])) {
+                    echo "cURL Error when calling Launch APIs on page ' . $i . '.  Reponse: " . var_dump($response);
+                    exit;
+                }
+
+                foreach ($arrNextSetOfExtensions['data'] as $extension) {
+                    $arrAllExtensions[] = $extension;
+                }
+            }            
+            return $arrAllExtensions;
+        }
+        else {
+            return $arrExtensions['data'];
+        }
     }
     
     
@@ -99,7 +145,7 @@ class ReactorAPI
      */
     public function getWebExtensions()
     {
-        $url = $this->_api_endpoint . "?page[size]=999&sort=display_name&filter[platform]=EQ%20web,EQ%20null&max_availability=private";
+        $url = $this->_api_endpoint . "?page[size]=300&sort=display_name&filter[platform]=EQ%20web,EQ%20null&max_availability=private";
         return $this->sendApiCall($url);
     }
     
