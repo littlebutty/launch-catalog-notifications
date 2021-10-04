@@ -151,7 +151,7 @@ class ReactorAPI
     
     
     /**
-     * Call to get a list of the Extensions currently in the
+     * Call to get a list of the MOBILE Extensions currently in the
      * Launch Catalog.
      *
      * @see https://developer.adobelaunch.com/api/extension_packages/list/
@@ -160,6 +160,19 @@ class ReactorAPI
     public function getMobileExtensions()
     {
         $url = $this->_api_endpoint . "?page[size]=999&sort=display_name&filter[platform]=EQ%20mobile,EQ%20null&max_availability=private";
+        return $this->sendApiCall($url);
+    }
+    
+    /**
+     * Call to get a list of the EDGE Extensions currently in the
+     * Launch Catalog.
+     *
+     * @see https://developer.adobelaunch.com/api/extension_packages/list/
+     * @return Array
+     */
+    public function getEdgeExtensions()
+    {
+        $url = $this->_api_endpoint . "?page[size]=999&sort=display_name&filter[platform]=EQ%20edge,EQ%20null&max_availability=private";
         return $this->sendApiCall($url);
     }
     

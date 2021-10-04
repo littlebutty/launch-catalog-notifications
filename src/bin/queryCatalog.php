@@ -162,6 +162,9 @@ $reactor = new ReactorAPI($config['adobe']['launch']['launch_api'], $access_toke
 if (isset($config['adobe']['launch']['launch_catalog']) && strtolower(trim($config['adobe']['launch']['launch_catalog']) == 'mobile')) {
     $arrExtensions = $reactor->getMobileExtensions();
 }
+elseif (isset($config['adobe']['launch']['launch_catalog']) && strtolower(trim($config['adobe']['launch']['launch_catalog']) == 'edge')) {
+    $arrExtensions = $reactor->getEdgeExtensions();
+}
 else {
     // Assume Web
     $arrExtensions = $reactor->getWebExtensions();
