@@ -135,7 +135,7 @@ class SlackAPI
         $friendlyDate = date('l jS \of F Y h:i:s A', $time);
         $strNewMessage = sprintf("WooHoo! A new extension called '%s' was released to the %s Launch Catalog by '%s'.", $name, $environment, $author);
         
-        if (strlen($url) > 0) {
+        if (!$url && strlen($url) > 0) {
             $linkMessage = sprintf("Check out the details here: %s.", $url);
             $strNewMessage = $strNewMessage . " " . $linkMessage;
         }

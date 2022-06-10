@@ -155,6 +155,16 @@ else {
 $adobeIO = new AdobeIO($config['adobe']['io']['ims_end_point']);
 $access_token = $adobeIO->getAccessToken($config['adobe']['io']['client_id'], $config['adobe']['io']['client_secret'], $token);
 
+if($access_token == false) {
+    $errMsg = "\nFailed to obtain a valid IMS Token. Please check that the certificate is still valid and that IMS is functional.\n";
+    echo $errMsg;
+    
+    $slackError = new SlackAPI();
+    $slackError->setWebhooksList($config['slack']['errors']);
+    $slackError->postMessage($errMsg);
+    
+    exit;
+}
 
 // Adobe Launch API
 $reactor = new ReactorAPI($config['adobe']['launch']['launch_api'], $access_token);
@@ -242,7 +252,13 @@ if (is_array($arrFoundExtesnions) && sizeof($arrFoundExtesnions) > 0) {
         fclose($recLocalExtensions);
     }
     catch (Exception $e) {
-        echo "\nFailed to read or write the local storage file to cache directory.\nPlease make sure this sript can write to this directory.\n";
+        $errMsg = "\nFailed to read or write the local storage file to cache directory.\nPlease make sure this sript can write to this directory.\n";
+        echo $errMsg;
+        
+        $slackError = new SlackAPI();
+        $slackError->setWebhooksList($config['slack']['errors']);
+        $slackError->postMessage($errMsg);
+        
         exit;
     }
 }

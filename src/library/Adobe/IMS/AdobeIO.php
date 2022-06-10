@@ -68,6 +68,7 @@ class AdobeIO
             $arrResponse = json_decode($response, true);
             if (!$arrResponse || sizeof($arrResponse) <= 0 || !isset($arrResponse['access_token'])) {
                 echo "\nFailed to get IMS access token.  Response was: " . $response;
+                return false;
             }
             else {
                 return $arrResponse['access_token'];
